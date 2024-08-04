@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <actionCalls>
+        <name>doZipCodeSearch</name>
+        <label>doZipCodeSearch</label>
+        <locationX>380</locationX>
+        <locationY>242</locationY>
+        <actionName>doZipSearchAPICall.doZipSearchAPICall</actionName>
+        <actionType>externalService</actionType>
+        <connector>
+            <targetReference>Check_API_Call_Status</targetReference>
+        </connector>
+        <flowTransactionModel>Automatic</flowTransactionModel>
+        <inputParameters>
+            <name>country</name>
+            <value>
+                <elementReference>CountryPicklist</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>zipCode</name>
+            <value>
+                <elementReference>Zip_CodeToSearch</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>doZipSearchAPICall.doZipSearchAPICall</nameSegment>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <apiVersion>61.0</apiVersion>
+    <decisions>
+        <name>Check_API_Call_Status</name>
+        <label>Check API Call Status</label>
+        <locationX>380</locationX>
+        <locationY>350</locationY>
+        <defaultConnector>
+            <targetReference>showError</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Check_Success</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>doZipCodeSearch.responseCode</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <numberValue>200.0</numberValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Check_Non_US_Data_Response</targetReference>
+            </connector>
+            <label>Check Success</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Check_Non_US_Data_Response</name>
+        <label>Check Non US Data Response</label>
+        <locationX>182</locationX>
+        <locationY>458</locationY>
+        <defaultConnector>
+            <targetReference>Show_US_Response</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Check_Non_US_Data</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>doZipCodeSearch.responseCode</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <numberValue>200.0</numberValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>doZipCodeSearch.2XX.countryx20abbreviation</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <stringValue>US</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Log_Non_US_data</targetReference>
+            </connector>
+            <label>Check Non-US Data</label>
+        </rules>
+    </decisions>
+    <description>-- Added Non-US Log Entry</description>
+    <dynamicChoiceSets>
+        <name>CountryCodes</name>
+        <dataType>Picklist</dataType>
+        <displayField xsi:nil="true"/>
+        <object xsi:nil="true"/>
+        <picklistField>OtherCountryCode</picklistField>
+        <picklistObject>Contact</picklistObject>
+    </dynamicChoiceSets>
+    <environments>Default</environments>
+    <interviewLabel>Zip Explorer Flow {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Zip Code Lookup Flow</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>Flow</processType>
+    <recordCreates>
+        <name>Log_Non_US_data</name>
+        <label>Log Non - US data</label>
+        <locationX>50</locationX>
+        <locationY>566</locationY>
+        <connector>
+            <targetReference>Get_Non_US_Data_Response_records</targetReference>
+        </connector>
+        <inputAssignments>
+            <field>Country_Abbreviation__c</field>
+            <value>
+                <elementReference>doZipCodeSearch.2XX.countryx20abbreviation</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Country__c</field>
+            <value>
+                <elementReference>doZipCodeSearch.2XX.country</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>PostCode__c</field>
+            <value>
+                <elementReference>doZipCodeSearch.2XX.postx20code</elementReference>
+            </value>
+        </inputAssignments>
+        <object>Zip_Lookup_Response__c</object>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordCreates>
+    <recordLookups>
+        <name>Get_Non_US_Data_Response_records</name>
+        <label>Get Non-US Data Response records</label>
+        <locationX>50</locationX>
+        <locationY>674</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Show_Non_US_Response</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Country_Abbreviation__c</field>
+            <operator>NotEqualTo</operator>
+            <value>
+                <stringValue>US</stringValue>
+            </value>
+        </filters>
+        <getFirstRecordOnly>false</getFirstRecordOnly>
+        <object>Zip_Lookup_Response__c</object>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <screens>
+        <name>Show_Non_US_Response</name>
+        <label>Show Non - US Response</label>
+        <locationX>50</locationX>
+        <locationY>782</locationY>
+        <allowBack>false</allowBack>
+        <allowFinish>true</allowFinish>
+        <allowPause>false</allowPause>
+        <connector>
+            <isGoTo>true</isGoTo>
+            <targetReference>Zip_Explorer</targetReference>
+        </connector>
+        <fields>
+            <name>showNonUSResponse</name>
+            <fieldText>&lt;p&gt;&lt;strong style=&quot;color: rgb(46, 118, 39);&quot;&gt;Current Zip Code Search Results:-&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;&lt;strong&gt;Country&lt;/strong&gt;  : {!doZipCodeSearch.2XX.country}&lt;/p&gt;&lt;p&gt;&lt;strong&gt;Country Abbreviation : &lt;/strong&gt;{!doZipCodeSearch.2XX.countryx20abbreviation}&lt;/p&gt;&lt;p&gt;&lt;strong style=&quot;background-color: rgb(255, 255, 255); color: rgb(68, 68, 68);&quot;&gt;PostCode &lt;/strong&gt;&lt;strong&gt;: &lt;/strong&gt;{!doZipCodeSearch.2XX.postx20code}&lt;/p&gt;&lt;p&gt;&lt;strong&gt; &lt;/strong&gt;&lt;strong style=&quot;background-color: rgb(255, 255, 255); color: rgb(68, 68, 68);&quot;&gt;Places :&lt;/strong&gt;{!doZipCodeSearch.2XX.places}&lt;/p&gt;</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <fields>
+            <name>Non_US_saved_Records</name>
+            <dataTypeMappings>
+                <typeName>T</typeName>
+                <typeValue>Zip_Lookup_Response__c</typeValue>
+            </dataTypeMappings>
+            <extensionName>flowruntime:datatable</extensionName>
+            <fieldType>ComponentInstance</fieldType>
+            <inputParameters>
+                <name>label</name>
+                <value>
+                    <stringValue>All Saved Non US Searched Records</stringValue>
+                </value>
+            </inputParameters>
+            <inputParameters>
+                <name>selectionMode</name>
+                <value>
+                    <stringValue>NO_SELECTION</stringValue>
+                </value>
+            </inputParameters>
+            <inputParameters>
+                <name>minRowSelection</name>
+                <value>
+                    <numberValue>0.0</numberValue>
+                </value>
+            </inputParameters>
+            <inputParameters>
+                <name>shouldDisplayLabel</name>
+                <value>
+                    <booleanValue>true</booleanValue>
+                </value>
+            </inputParameters>
+            <inputParameters>
+                <name>tableData</name>
+                <value>
+                    <elementReference>Get_Non_US_Data_Response_records</elementReference>
+                </value>
+            </inputParameters>
+            <inputParameters>
+                <name>maxRowSelection</name>
+                <value>
+                    <numberValue>0.0</numberValue>
+                </value>
+            </inputParameters>
+            <inputParameters>
+                <name>columns</name>
+                <value>
+                    <stringValue>[{&quot;apiName&quot;:&quot;Country__c&quot;,&quot;guid&quot;:&quot;column-0a57&quot;,&quot;editable&quot;:false,&quot;hasCustomHeaderLabel&quot;:false,&quot;customHeaderLabel&quot;:&quot;&quot;,&quot;wrapText&quot;:true,&quot;order&quot;:0,&quot;label&quot;:&quot;Country&quot;,&quot;type&quot;:&quot;text&quot;},{&quot;apiName&quot;:&quot;Country_Abbreviation__c&quot;,&quot;guid&quot;:&quot;column-8fae&quot;,&quot;editable&quot;:false,&quot;hasCustomHeaderLabel&quot;:false,&quot;customHeaderLabel&quot;:&quot;&quot;,&quot;wrapText&quot;:true,&quot;order&quot;:1,&quot;label&quot;:&quot;Country Abbreviation&quot;,&quot;type&quot;:&quot;text&quot;},{&quot;apiName&quot;:&quot;PostCode__c&quot;,&quot;guid&quot;:&quot;column-74da&quot;,&quot;editable&quot;:false,&quot;hasCustomHeaderLabel&quot;:false,&quot;customHeaderLabel&quot;:&quot;&quot;,&quot;wrapText&quot;:true,&quot;order&quot;:2,&quot;label&quot;:&quot;PostCode&quot;,&quot;type&quot;:&quot;text&quot;},{&quot;apiName&quot;:&quot;CreatedDate&quot;,&quot;guid&quot;:&quot;column-e316&quot;,&quot;editable&quot;:false,&quot;hasCustomHeaderLabel&quot;:false,&quot;customHeaderLabel&quot;:&quot;&quot;,&quot;wrapText&quot;:true,&quot;order&quot;:3,&quot;label&quot;:&quot;Created Date&quot;,&quot;type&quot;:&quot;customDateTime&quot;},{&quot;apiName&quot;:&quot;LastModifiedDate&quot;,&quot;guid&quot;:&quot;column-4ad7&quot;,&quot;editable&quot;:false,&quot;hasCustomHeaderLabel&quot;:false,&quot;customHeaderLabel&quot;:&quot;&quot;,&quot;wrapText&quot;:true,&quot;order&quot;:4,&quot;label&quot;:&quot;Last Modified Date&quot;,&quot;type&quot;:&quot;customDateTime&quot;}]</stringValue>
+                </value>
+            </inputParameters>
+            <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
+            <isRequired>true</isRequired>
+            <storeOutputAutomatically>true</storeOutputAutomatically>
+        </fields>
+        <nextOrFinishButtonLabel>Search Different</nextOrFinishButtonLabel>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <screens>
+        <name>Show_US_Response</name>
+        <label>Show US Response</label>
+        <locationX>314</locationX>
+        <locationY>566</locationY>
+        <allowBack>false</allowBack>
+        <allowFinish>true</allowFinish>
+        <allowPause>false</allowPause>
+        <connector>
+            <isGoTo>true</isGoTo>
+            <targetReference>Zip_Explorer</targetReference>
+        </connector>
+        <fields>
+            <name>ShowUSResponse</name>
+            <fieldText>&lt;p&gt;&lt;strong style=&quot;color: rgb(46, 118, 39);&quot;&gt;Current Zip Code Search Results:-&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;&lt;strong&gt;Country&lt;/strong&gt;  : {!doZipCodeSearch.2XX.country}&lt;/p&gt;&lt;p&gt;&lt;strong&gt;Country Abbreviation : &lt;/strong&gt;{!doZipCodeSearch.2XX.countryx20abbreviation}&lt;/p&gt;&lt;p&gt;&lt;strong style=&quot;background-color: rgb(255, 255, 255); color: rgb(68, 68, 68);&quot;&gt;PostCode &lt;/strong&gt;&lt;strong&gt;: &lt;/strong&gt;{!doZipCodeSearch.2XX.postx20code}&lt;/p&gt;&lt;p&gt;&lt;strong&gt; &lt;/strong&gt;&lt;strong style=&quot;background-color: rgb(255, 255, 255); color: rgb(68, 68, 68);&quot;&gt;Places :&lt;/strong&gt;{!doZipCodeSearch.2XX.places}&lt;/p&gt;</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <nextOrFinishButtonLabel>Search Different</nextOrFinishButtonLabel>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <screens>
+        <name>showError</name>
+        <label>showError</label>
+        <locationX>578</locationX>
+        <locationY>458</locationY>
+        <allowBack>false</allowBack>
+        <allowFinish>true</allowFinish>
+        <allowPause>false</allowPause>
+        <connector>
+            <isGoTo>true</isGoTo>
+            <targetReference>Zip_Explorer</targetReference>
+        </connector>
+        <fields>
+            <name>ErrorResponse</name>
+            <fieldText>&lt;p&gt;&lt;strong style=&quot;color: rgb(221, 20, 20);&quot;&gt;No Results Found :&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;&lt;strong&gt;API Results&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;&lt;strong&gt;Status Code :&lt;/strong&gt;{!doZipCodeSearch.responseCode}&lt;/p&gt;&lt;p&gt;&lt;strong style=&quot;color: rgb(18, 18, 18);&quot;&gt;Exception: &lt;/strong&gt;&lt;span style=&quot;color: rgb(18, 17, 17);&quot;&gt;{!doZipCodeSearch.defaultExc}&lt;/span&gt;&lt;/p&gt;</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <nextOrFinishButtonLabel>Search Again</nextOrFinishButtonLabel>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <screens>
+        <description>Zip Lookup</description>
+        <name>Zip_Explorer</name>
+        <label>Zip Lookup</label>
+        <locationX>380</locationX>
+        <locationY>134</locationY>
+        <allowBack>false</allowBack>
+        <allowFinish>true</allowFinish>
+        <allowPause>false</allowPause>
+        <connector>
+            <targetReference>doZipCodeSearch</targetReference>
+        </connector>
+        <fields>
+            <name>DescriptionText</name>
+            <fieldText>&lt;p&gt;&lt;strong style=&quot;font-size: 16px; color: rgb(73, 140, 73);&quot;&gt;Please select Country &amp;amp; Zip Code&lt;/strong&gt;&lt;/p&gt;</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <fields>
+            <name>CountryPicklist</name>
+            <choiceReferences>CountryCodes</choiceReferences>
+            <dataType>String</dataType>
+            <fieldText>Please Select Country</fieldText>
+            <fieldType>DropdownBox</fieldType>
+            <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
+            <isRequired>true</isRequired>
+        </fields>
+        <fields>
+            <name>Zip_CodeToSearch</name>
+            <dataType>String</dataType>
+            <fieldText>Enter Zip Code</fieldText>
+            <fieldType>InputField</fieldType>
+            <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
+            <isRequired>true</isRequired>
+        </fields>
+        <nextOrFinishButtonLabel>Search Zip Code</nextOrFinishButtonLabel>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <start>
+        <locationX>254</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Zip_Explorer</targetReference>
+        </connector>
+    </start>
+    <status>Active</status>
+</Flow>

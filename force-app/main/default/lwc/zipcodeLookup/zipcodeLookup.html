@@ -1,0 +1,32 @@
+<template>
+    <lightning-card title="ZIP Code Lookup" icon-name="custom:custom63">
+        <div style="margin: 1rem;">
+            <template if:true={showLoader}>
+                <lightning-spinner alternative-text="Loading"></lightning-spinner>
+            </template>
+            <div class="form-container form-input">
+                <div class="slds-size_1-of-2">
+                    <lightning-combobox required name="Please Select Country" label="Country" value={countryVal}
+                        options={picklistValues} onchange={handleCountryChange}>
+                    </lightning-combobox>
+                </div>
+                <div class="slds-size_1-of-2 form-input">
+                    <lightning-input required label="Enter ZIP Code" value={zipcode}
+                        onchange={handleZipcodeChange}></lightning-input>
+                </div>
+                <br>
+                <div class="slds-size_1-of-2 form-input">
+                    <lightning-button variant="brand" onclick={lookupZipcode}
+                        label="search Zip Code"></lightning-button>
+                </div>
+            </div>
+            <br>
+            <template if:true={zipLookupResponse}>
+                <c-zip-code-response response={zipLookupResponse}></c-zip-code-response>
+            </template>
+            <template if:true={nonUSresults}>
+                <c-show-non-U-S-Data ></c-show-non-U-S-Data>
+            </template>
+        </div>
+    </lightning-card>
+</template>

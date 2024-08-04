@@ -1,0 +1,70 @@
+<template>
+    <template if:true={response}>
+        <lightning-card title="Zip Code Lookup Results">
+            <div>
+                <template if:true={showError}>
+                    <div class="slds-p-around_medium">
+                        <p style="color:red ;font-size: medium ;font-weight: 500;"> No results found :
+                            ErrorCode:{response.statusCode}</p>
+                    </div>
+                </template>
+                <template if:false={showError}>
+                    <div class="slds-p-around_medium">
+                        <p style="color: Green ;font-size: medium ;font-weight: 500;"> Results Found
+                            StatusCode:{response.statusCode}</p>
+                        <br>
+                        <table
+                            class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_striped slds-size_1-of-2">
+                            <thead>
+                                <tr class="slds-line-height_reset">
+                                    <th class="" scope="col">
+                                        Country
+                                    </th>
+                                    <th class="" scope="col">
+                                        country Abbreviation
+                                    </th>
+                                    <th class="" scope="col">
+                                        postCode
+                                    </th>
+                                    <th class="" scope="col">
+                                        State Abbreviation
+                                    </th>
+                                    <th class="" scope="col">
+                                        State
+                                    </th>
+                                    <th class="" scope="col">
+                                        Place Name
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="slds-hint-parent">
+                                    <template for:each={response.places} for:item="place" for:index="index">
+                                        <td data-label="" key={place.stateAbbreviation}>
+                                            <div class="slds-cell-wrap">{response.country}</div>
+                                        </td>
+                                        <td data-label="" key={place.stateAbbreviation}>
+                                            <div class="slds-cell-wrap">{response.countryAbbreviation}</div>
+                                        </td>
+                                        <td data-label="" key={place.stateAbbreviation}>
+                                            <div class="slds-cell-wrap">{response.postCode}</div>
+                                        </td>
+                                        <td data-label="" key={place.stateAbbreviation}>
+                                            <div class="slds-cell-wrap">{place.stateAbbreviation}</div>
+                                        </td>
+                                        <td data-label="" key={place.stateAbbreviation}>
+                                            <div class="slds-cell-wrap">{place.state}</div>
+                                        </td>
+                                        <td data-label="" key={place.stateAbbreviation}>
+                                            <div class="slds-cell-wrap">{place.placeName}</div>
+                                        </td>
+                                    </template>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </template>
+            </div>
+        </lightning-card>
+    </template>
+</template>

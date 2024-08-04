@@ -1,0 +1,14 @@
+<template>
+    <lightning-card title="Logged Non-US Zip Code Responses">
+        <div class="slds-size_1-of-2">
+            <template if:true={nonUSResults}>
+                <lightning-datatable key-field="id" data={nonUSResults} columns={columns} hide-checkbox-column
+                    class="slds-box">
+                </lightning-datatable>
+            </template>
+            <template if:false={nonUSResults}>
+                <p>No Logged Non - US Search Results</p>
+            </template>
+        </div>
+    </lightning-card>
+</template>
