@@ -4,6 +4,7 @@ public with sharing class ZipCodeCalloutResponseParserTest {
 		String json = '{'+
 		'  \"post code\": \"815353\",'+
 		'  \"country\": \"India\",'+
+		'  \"statusCode\":200,'+
 		'  \"country abbreviation\": \"IN\",'+
 		'  \"places\": ['+
 		'    {'+
