@@ -13,7 +13,8 @@ Metadata Components
 - LWC  : zipcodeLookup (Main LWC where user can enter Zip code and search along with country selection )
 - ApexClass: ZipCodeController (contains apex actions for callouts and logging non US response)
 - ApexClass: ZipCodeCalloutResponseParser (JSON Parser class for response parsing)
-
+- Test Classes: ZipCodeControllerTest , ZipCodeCalloutResponseParserTest
+  
 # Child LWC componens 
 - LWC : showNonUSData
 - LWC : zipCodeResponse
