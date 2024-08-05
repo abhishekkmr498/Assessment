@@ -67,7 +67,7 @@ a user different than account owner.
 Update Account Risk Field 
 <img width="1435" alt="Screenshot 2024-08-05 at 4 20 30 AM" src="https://github.com/user-attachments/assets/cc2abc91-7fb2-4c0a-98db-17280682bd75">
 
-Case Created has difference ownere as of Account when created through Platform Event.
+Case Created has difference owner as of Account when created through Platform Event.
 <img width="1434" alt="Screenshot 2024-08-05 at 4 21 11 AM" src="https://github.com/user-attachments/assets/5886b812-b9c0-48b5-9053-f473ecf918a0">
 
 
