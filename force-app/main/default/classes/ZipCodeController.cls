@@ -3,9 +3,6 @@
  * Developer : Abhishek Prasad
  */
 public without sharing class ZipCodeController {
-    public ZipCodeController() {
-
-    }
 
     @AuraEnabled
     public static String saveNonUSZipcodeResponse(String response) {
@@ -34,7 +31,7 @@ public without sharing class ZipCodeController {
     }
 
     @AuraEnabled(cacheable=true)
-    public static List<Zip_Lookup_Response__c> getNonUSZipcodeResponses(String country, String countryAbb, String postalCode, String StateName, String rawResp) {
+    public static List<Zip_Lookup_Response__c> getNonUSZipcodeResponses() {
         return [SELECT ID,
                             Country_Abbreviation__c ,
                             Country__c,
